@@ -56,6 +56,7 @@ var is_dead      : bool = false
 
 var sound_espada  = preload("res://Sonidos/Efectos/espada.mp3")
 var _sfx_player   : AudioStreamPlayer2D
+var _death_canvas : CanvasLayer
 
 var label_nombre  : Label
 var label_nivel   : Label
@@ -348,24 +349,23 @@ func _morir() -> void:
 	var muertes = _get_kill_count()
 	_show_death_ui(muertes, vidas_actuales)
 
-	await sprite.animation_finished
-
 	if not NetworkManager.is_multiplayer_active():
 		if vidas_actuales > 0:
-			# Si aún tiene vidas, reaparecer con salud completa tras unos segundos
 			await get_tree().create_timer(2.5).timeout
 			_respawn()
 		else:
-			# Si agotó sus vidas, esperar en estado Game Over y redirigir al menú
 			await get_tree().create_timer(4.0).timeout
 			get_tree().change_scene_to_file("res://Scenes/UI/MainMenu.tscn")
 
 func _respawn() -> void:
+	if is_instance_valid(_death_canvas):
+		_death_canvas.queue_free()
 	salud_actual = vida_maxima
 	is_dead = false
 	sprite.modulate = Color.WHITE
 	set_collision_layer_value(2, true)
 	set_collision_mask_value(1, true)
+	hitbox.monitoring = false
 	actualizar_ui_corazones()
 	if sprite:
 		sprite.play(ANIM_IDLE)
@@ -384,8 +384,11 @@ func _get_kill_count() -> int:
 
 func _show_death_ui(muertes: int, vidas_restantes: int = 0) -> void:
 	var escenario = get_tree().current_scene
-	var canvas = CanvasLayer.new()
-	canvas.layer = 100
+	if is_instance_valid(_death_canvas):
+		_death_canvas.queue_free()
+	_death_canvas = CanvasLayer.new()
+	_death_canvas.layer = 100
+	var canvas = _death_canvas
 	escenario.add_child(canvas)
 
 	var bg = ColorRect.new()
