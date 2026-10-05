@@ -27,10 +27,12 @@ const GUARD_RECHARGE_RATE : float = 1.0
 
 @export_group("Combate")
 @export var vida_maxima  : int = 10
+@export var vidas_maximas: int = 3
 @export var poder_ataque : int = 2
 @export var fuerza       : int = 0
 var dano_base    : int   = 2
 var salud_actual : int
+var vidas_actuales: int  = 3
 var guard_energy : float = GUARD_MAX
 var is_guarding  : bool  = false
 
@@ -313,12 +315,13 @@ func _rpc_notify_damage() -> void:
 	actualizar_ui_corazones()
 
 # ─────────────────────────────────────────────────────────────
-#  DEATH
+#  DEATH & LIVES SYSTEM (FEATURE)
 # ─────────────────────────────────────────────────────────────
 func _morir() -> void:
 	if is_dead: return
 	is_dead = true
-	print("[Caballero] Caído. Peer: %d" % my_peer_id)
+	vidas_actuales -= 1
+	print("[Caballero] Caído. Vidas restantes: %d. Peer: %d" % [vidas_actuales, my_peer_id])
 
 	velocity = Vector2.ZERO
 	set_collision_layer_value(2, false)
@@ -330,29 +333,43 @@ func _morir() -> void:
 		sprite.sprite_frames.set_animation_loop(ANIM_DEATH, false)
 		sprite.play(ANIM_DEATH)
 		
-		# Dejarlo como fantasma transparente para que pueda seguir siendo espectador visible
 		var t = create_tween()
 		t.tween_property(sprite, "modulate:a", 0.4, 1.0)
 
 	# Notificar al host/red que este jugador murió
 	if NetworkManager.is_multiplayer_active():
 		if NetworkManager.is_server():
-			# Si soy el host, marcarme como muerto y notificar por RPC a todos los clientes
 			NetworkManager.rpc_set_player_alive.rpc(1, false)
 			_rpc_notify_host_death.rpc(_get_kill_count())
 		else:
-			# El cliente reporta su propia muerte al host vía RPC any_peer
 			NetworkManager.rpc_report_my_death.rpc_id(1)
 
-	# Estadísticas de muertes
+	# Estadísticas de muertes y UI según estado de vidas
 	var muertes = _get_kill_count()
-	_show_death_ui(muertes)
+	_show_death_ui(muertes, vidas_actuales)
 
 	await sprite.animation_finished
-	await get_tree().create_timer(4.0).timeout
 
 	if not NetworkManager.is_multiplayer_active():
-		get_tree().change_scene_to_file("res://Scenes/UI/MainMenu.tscn")
+		if vidas_actuales > 0:
+			# Si aún tiene vidas, reaparecer con salud completa tras unos segundos
+			await get_tree().create_timer(2.5).timeout
+			_respawn()
+		else:
+			# Si agotó sus vidas, esperar en estado Game Over y redirigir al menú
+			await get_tree().create_timer(4.0).timeout
+			get_tree().change_scene_to_file("res://Scenes/UI/MainMenu.tscn")
+
+func _respawn() -> void:
+	salud_actual = vida_maxima
+	is_dead = false
+	sprite.modulate = Color.WHITE
+	set_collision_layer_value(2, true)
+	set_collision_mask_value(1, true)
+	actualizar_ui_corazones()
+	if sprite:
+		sprite.play(ANIM_IDLE)
+	print("[Caballero] Respawn completado. Salud restaurada: %d" % salud_actual)
 
 func _get_kill_count() -> int:
 	var escenario = get_tree().current_scene
@@ -365,11 +382,18 @@ func _get_kill_count() -> int:
 		total += escenario.lanceros_derrotados
 	return total
 
-func _show_death_ui(muertes: int) -> void:
+func _show_death_ui(muertes: int, vidas_restantes: int = 0) -> void:
 	var escenario = get_tree().current_scene
 	var canvas = CanvasLayer.new()
 	canvas.layer = 100
 	escenario.add_child(canvas)
+
+	var bg = ColorRect.new()
+	bg.color = Color(0, 0, 0, 0)
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	canvas.add_child(bg)
+	var tween_bg = create_tween()
+	tween_bg.tween_property(bg, "color:a", 0.75, 1.0)
 
 	var text_muerte = Label.new()
 	if NetworkManager.is_multiplayer_active():
@@ -377,17 +401,14 @@ func _show_death_ui(muertes: int) -> void:
 		text_muerte.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 		text_muerte.position = Vector2(0, 50)
 	else:
-		var bg = ColorRect.new()
-		bg.color = Color(0, 0, 0, 0)
-		bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-		canvas.add_child(bg)
-		var tween_bg = create_tween()
-		tween_bg.tween_property(bg, "color:a", 0.7, 1.0)
-		text_muerte.text = "¡HAS CAÍDO!\nDerrotaste a %d enemigos." % muertes
+		if vidas_restantes > 0:
+			text_muerte.text = "¡HAS CAÍDO!\nTe quedan %d vida(s).\nReapareciendo..." % vidas_restantes
+		else:
+			text_muerte.text = "💀 GAME OVER 💀\nSin vidas restantes.\nEnemigos derrotados: %d\nVolviendo al menú principal..." % muertes
 		text_muerte.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
-	text_muerte.add_theme_font_size_override("font_size", 24)
-	text_muerte.add_theme_color_override("font_color", Color.RED)
+	text_muerte.add_theme_font_size_override("font_size", 26)
+	text_muerte.add_theme_color_override("font_color", Color.RED if vidas_restantes <= 0 else Color.ORANGE)
 	text_muerte.add_theme_color_override("font_outline_color", Color.BLACK)
 	text_muerte.add_theme_constant_override("outline_size", 6)
 	text_muerte.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
