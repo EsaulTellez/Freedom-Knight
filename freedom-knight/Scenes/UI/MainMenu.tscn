@@ -1,20 +1,11 @@
-[gd_scene format=3 uid="uid://ccduinat2mb81"]
+[gd_scene load_steps=13 format=3 uid="uid://ccduinat2mb81"]
 
 [ext_resource type="AudioStream" uid="uid://d0flxjrb4wjfp" path="res://Sonidos/Musica/1 - El inicio.wav" id="1_g18y6"]
-[ext_resource type="Script" uid="uid://cvy5x6qiqadqh" path="res://Scripts/MainMenu.gd" id="1_mjmdf"]
+[ext_resource type="Script" path="res://Scripts/MainMenu.gd" id="1_mjmdf"]
 [ext_resource type="Texture2D" uid="uid://cyag3sf3470wi" path="res://Imagenes/fotomenu.png" id="2_72sra"]
 [ext_resource type="Texture2D" uid="uid://3l41pusd84bh" path="res://Botones_Iconos/FKmenubtn.png" id="4_t6w0q"]
 
 [sub_resource type="FontFile" id="FontFile_t6w0q"]
-cache/0/variation_coordinates = {}
-cache/0/face_index = 0
-cache/0/embolden = 0.0
-cache/0/transform = Transform2D(1, 0, 0, 1, 0, 0)
-cache/0/spacing_top = 0
-cache/0/spacing_bottom = 0
-cache/0/spacing_space = 0
-cache/0/spacing_glyph = 0
-cache/0/baseline_offset = 0.0
 cache/0/16/0/ascent = 0.0
 cache/0/16/0/descent = 0.0
 cache/0/16/0/underline_position = 0.0
@@ -43,18 +34,9 @@ cache/0/32/0/scale = 1.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_k8um8"]
 font_size = 32
-font_color = Color(0.99999887, 0.99361736, 0.5477316, 1)
+font_color = Color(0.999999, 0.993617, 0.547732, 1)
 
 [sub_resource type="FontFile" id="FontFile_jex3y"]
-cache/0/variation_coordinates = {}
-cache/0/face_index = 0
-cache/0/embolden = 0.0
-cache/0/transform = Transform2D(1, 0, 0, 1, 0, 0)
-cache/0/spacing_top = 0
-cache/0/spacing_bottom = 0
-cache/0/spacing_space = 0
-cache/0/spacing_glyph = 0
-cache/0/baseline_offset = 0.0
 cache/0/16/0/ascent = 0.0
 cache/0/16/0/descent = 0.0
 cache/0/16/0/underline_position = 0.0
@@ -69,18 +51,9 @@ cache/0/32/0/scale = 1.0
 [sub_resource type="LabelSettings" id="LabelSettings_744d7"]
 font = SubResource("FontFile_jex3y")
 font_size = 32
-font_color = Color(1, 0.99215686, 0.54901963, 1)
+font_color = Color(1, 0.992157, 0.54902, 1)
 
 [sub_resource type="FontFile" id="FontFile_kl3t2"]
-cache/0/variation_coordinates = {}
-cache/0/face_index = 0
-cache/0/embolden = 0.0
-cache/0/transform = Transform2D(1, 0, 0, 1, 0, 0)
-cache/0/spacing_top = 0
-cache/0/spacing_bottom = 0
-cache/0/spacing_space = 0
-cache/0/spacing_glyph = 0
-cache/0/baseline_offset = 0.0
 cache/0/16/0/ascent = 0.0
 cache/0/16/0/descent = 0.0
 cache/0/16/0/underline_position = 0.0
@@ -95,18 +68,9 @@ cache/0/32/0/scale = 1.0
 [sub_resource type="LabelSettings" id="LabelSettings_ynupv"]
 font = SubResource("FontFile_kl3t2")
 font_size = 32
-font_color = Color(1, 0.99215686, 0.54901963, 1)
+font_color = Color(1, 0.992157, 0.54902, 1)
 
 [sub_resource type="FontFile" id="FontFile_m48tj"]
-cache/0/variation_coordinates = {}
-cache/0/face_index = 0
-cache/0/embolden = 0.0
-cache/0/transform = Transform2D(1, 0, 0, 1, 0, 0)
-cache/0/spacing_top = 0
-cache/0/spacing_bottom = 0
-cache/0/spacing_space = 0
-cache/0/spacing_glyph = 0
-cache/0/baseline_offset = 0.0
 cache/0/16/0/ascent = 0.0
 cache/0/16/0/descent = 0.0
 cache/0/16/0/underline_position = 0.0
@@ -121,9 +85,9 @@ cache/0/32/0/scale = 1.0
 [sub_resource type="LabelSettings" id="LabelSettings_dvisc"]
 font = SubResource("FontFile_m48tj")
 font_size = 32
-font_color = Color(1, 0.99215686, 0.54901963, 1)
+font_color = Color(1, 0.992157, 0.54902, 1)
 
-[node name="MainMenu" type="Control" unique_id=495987933]
+[node name="MainMenu" type="Control"]
 layout_direction = 1
 layout_mode = 3
 anchors_preset = 15
@@ -133,7 +97,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_mjmdf")
 
-[node name="TextureRect" type="TextureRect" parent="." unique_id=130237341]
+[node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -144,10 +108,10 @@ texture = ExtResource("2_72sra")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="MusicPlayer" type="AudioStreamPlayer" parent="." unique_id=1717811268]
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_g18y6")
 
-[node name="NuevaPartida" type="Control" parent="." unique_id=215323741]
+[node name="NuevaPartida" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -156,7 +120,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TextureButton" type="TextureButton" parent="NuevaPartida" unique_id=1551787423]
+[node name="TextureButton" type="TextureButton" parent="NuevaPartida"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.05
@@ -169,7 +133,7 @@ texture_normal = ExtResource("4_t6w0q")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="NuevaPartida/TextureButton" unique_id=2115521111]
+[node name="Label" type="Label" parent="NuevaPartida/TextureButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -183,7 +147,7 @@ label_settings = SubResource("LabelSettings_k8um8")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ContinuarPartida" type="Control" parent="." unique_id=724229344]
+[node name="ContinuarPartida" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -192,7 +156,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TextureButton" type="TextureButton" parent="ContinuarPartida" unique_id=200004281]
+[node name="TextureButton" type="TextureButton" parent="ContinuarPartida"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.05
@@ -205,7 +169,7 @@ texture_normal = ExtResource("4_t6w0q")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="ContinuarPartida/TextureButton" unique_id=334751582]
+[node name="Label" type="Label" parent="ContinuarPartida/TextureButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -217,7 +181,7 @@ label_settings = SubResource("LabelSettings_744d7")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Prueba" type="Control" parent="." unique_id=569866290]
+[node name="Prueba" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -226,7 +190,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TextureButton" type="TextureButton" parent="Prueba" unique_id=1889254159]
+[node name="TextureButton" type="TextureButton" parent="Prueba"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.55
@@ -239,7 +203,7 @@ texture_normal = ExtResource("4_t6w0q")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="Prueba/TextureButton" unique_id=1050785378]
+[node name="Label" type="Label" parent="Prueba/TextureButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -251,17 +215,17 @@ label_settings = SubResource("LabelSettings_ynupv")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Configuracion" type="Control" parent="." unique_id=1982593694]
+[node name="Configuracion" type="Control" parent="."]
 layout_mode = 1
 anchor_left = -0.027
 anchor_right = 1.0
 anchor_bottom = 1.041
 offset_left = 32.4
-offset_bottom = -27.674988
+offset_bottom = -27.675
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TextureButton" type="TextureButton" parent="Configuracion" unique_id=256408056]
+[node name="TextureButton" type="TextureButton" parent="Configuracion"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.55
@@ -274,7 +238,7 @@ texture_normal = ExtResource("4_t6w0q")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="Configuracion/TextureButton" unique_id=1805433273]
+[node name="Label" type="Label" parent="Configuracion/TextureButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

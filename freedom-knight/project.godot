@@ -11,13 +11,13 @@ config_version=5
 [application]
 
 config/name="Freedom Knight"
-run/main_scene="uid://ccduinat2mb81"
-config/features=PackedStringArray("4.6", "Forward Plus")
+run/main_scene="res://Scenes/UI/Escenas/escenario_pruebas.tscn"
+config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
-SaveManager="*uid://d2nx42bwt6y1m"
+SaveManager="*res://Managers/SaveManager.gd"
 NetworkManager="*res://Scripts/NetworkManager.gd"
 PlayerRegistry="*res://Scripts/PlayerRegistry.gd"
 
