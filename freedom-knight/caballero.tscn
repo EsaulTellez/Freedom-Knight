@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://c5321qo8yi2l5"]
+[gd_scene load_steps=185 format=3 uid="uid://c5321qo8yi2l5"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cvp7n"]
 region = Rect2(0, 0, 481, 700)
@@ -1156,19 +1156,19 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_b85wf"]
-size = Vector2(109.09375, 195.65625)
+size = Vector2(109.094, 195.656)
 
-[node name="Caballero" type="CharacterBody2D" unique_id=470449425]
+[node name="Caballero" type="CharacterBody2D"]
 position = Vector2(143, 22)
 
-[node name="AnimatedSprite" type="AnimatedSprite2D" parent="." unique_id=144203630]
+[node name="AnimatedSprite" type="AnimatedSprite2D" parent="."]
 position = Vector2(12, 120)
-scale = Vector2(0.34180135, 0.34462038)
+scale = Vector2(0.341801, 0.34462)
 sprite_frames = SubResource("SpriteFrames_lybl4")
 animation = &"attack_down"
 autoplay = "idle_down"
-frame_progress = 0.43413582
+frame_progress = 0.434136
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1917436634]
-position = Vector2(5.453125, 120.171875)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(5.45312, 120.172)
 shape = SubResource("RectangleShape2D_b85wf")
