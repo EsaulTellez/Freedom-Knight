@@ -407,7 +407,11 @@ func _show_death_ui(muertes: int, vidas_restantes: int = 0) -> void:
 		if vidas_restantes > 0:
 			text_muerte.text = "¡HAS CAÍDO!\nTe quedan %d vida(s).\nReapareciendo..." % vidas_restantes
 		else:
-			text_muerte.text = "💀 GAME OVER 💀\nSin vidas restantes.\nEnemigos derrotados: %d\nVolviendo al menú principal..." % muertes
+			var puntaje = 0
+			var record = SaveManager.high_score
+			if "score_actual" in escenario:
+				puntaje = escenario.score_actual
+			text_muerte.text = "💀 GAME OVER 💀\nSin vidas restantes.\nPuntaje Final: %d  |  Récord: %d\nEnemigos derrotados: %d\nVolviendo al menú principal..." % [puntaje, record, muertes]
 		text_muerte.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
 	text_muerte.add_theme_font_size_override("font_size", 26)

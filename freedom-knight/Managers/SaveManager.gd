@@ -6,6 +6,7 @@ var partida_actual: String = ""
 var escribiendo_texto: bool = false
 var dificultad_juego: int = 1 # 0 = Facil, 1 = Medio, 2 = Dificil
 var modo_juego: String = "Arcade"
+var high_score: int = 0
 
 func _ready():
 	var dir = DirAccess.open("user://")
@@ -244,7 +245,10 @@ func cargar_y_posicionar() -> void:
 
 # --- PERSISTENCIA DE CONFIGURACIÓN ---
 func guardar_config() -> void:
-	var config = {"nombre_jugador": nombre_jugador}
+	var config = {
+		"nombre_jugador": nombre_jugador,
+		"high_score": high_score
+	}
 	var file = FileAccess.open("user://config.json", FileAccess.WRITE)
 	if file:
 		file.store_string(JSON.stringify(config))
@@ -260,3 +264,12 @@ func cargar_config() -> void:
 			if typeof(config) == TYPE_DICTIONARY:
 				if config.has("nombre_jugador"):
 					nombre_jugador = config["nombre_jugador"]
+				if config.has("high_score"):
+					high_score = int(config["high_score"])
+
+func actualizar_high_score(nuevo_score: int) -> bool:
+	if nuevo_score > high_score:
+		high_score = nuevo_score
+		guardar_config()
+		return true
+	return false

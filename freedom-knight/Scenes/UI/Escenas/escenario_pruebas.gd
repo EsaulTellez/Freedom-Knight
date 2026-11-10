@@ -78,6 +78,8 @@ const SYNC_RATE_REMOTE: float = 0.05  # 20Hz para jugadores remotos
 #  UI
 # ─────────────────────────────────────────────────────────────
 var label_contador_muertes : Label
+var label_score            : Label
+var score_actual           : int   = 0
 var max_pociones_en_escena : int   = 3
 var intervalo_pocion_min   : float = 12.0
 var intervalo_pocion_max   : float = 22.0
@@ -453,6 +455,15 @@ func _crear_ui_contador() -> void:
 	canvas.layer = 2
 	add_child(canvas)
 
+	label_score = Label.new()
+	label_score.add_theme_font_size_override("font_size", 16)
+	label_score.add_theme_color_override("font_color", Color(1.0, 0.85, 0.2))
+	label_score.add_theme_color_override("font_outline_color", Color.BLACK)
+	label_score.add_theme_constant_override("outline_size", 4)
+	label_score.text = "Puntaje: 0  |  Récord: %d" % SaveManager.high_score
+	label_score.position = Vector2(20, 110)
+	canvas.add_child(label_score)
+
 	label_contador_muertes = Label.new()
 	label_contador_muertes.add_theme_font_size_override("font_size", 16)
 	label_contador_muertes.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4))
@@ -465,12 +476,31 @@ func _crear_ui_contador() -> void:
 	label_contador_muertes.position = Vector2(20, 150)
 	canvas.add_child(label_contador_muertes)
 
+func sumar_puntos(puntos: int) -> void:
+	score_actual += puntos
+	var es_nuevo_record = SaveManager.actualizar_high_score(score_actual)
+	_actualizar_ui_score(es_nuevo_record)
+
+func _actualizar_ui_score(es_nuevo_record: bool = false) -> void:
+	if not is_instance_valid(label_score):
+		return
+	if es_nuevo_record:
+		label_score.text = "★ ¡NUEVO RÉCORD! ★\nPuntaje: %d  |  Récord: %d" % [score_actual, SaveManager.high_score]
+		label_score.add_theme_color_override("font_color", Color(1.0, 0.95, 0.3))
+		var tw = create_tween()
+		tw.tween_property(label_score, "scale", Vector2(1.15, 1.15), 0.15)
+		tw.tween_property(label_score, "scale", Vector2(1.0, 1.0), 0.15)
+	else:
+		label_score.text = "Puntaje: %d  |  Récord: %d" % [score_actual, SaveManager.high_score]
+		label_score.add_theme_color_override("font_color", Color(1.0, 0.85, 0.2))
+
 # ─────────────────────────────────────────────────────────────
 #  ENEMIES — Solo host
 # ─────────────────────────────────────────────────────────────
 func _on_enemigo_murio(_pos) -> void:
 	enemigos_derrotados += 1
 	caballeros_vivos    -= 1
+	sumar_puntos(100)
 	_subir_dificultad()
 	get_tree().call_group("mascotas", "registrar_muerte_enemigo")
 	await get_tree().create_timer(1.0).timeout
@@ -500,6 +530,7 @@ func _spawnear_un_enemigo() -> void:
 func _on_vikingo_murio(_pos) -> void:
 	vikingos_derrotados += 1
 	vikingos_vivos      -= 1
+	sumar_puntos(250)
 	_subir_dificultad()
 	get_tree().call_group("mascotas", "registrar_muerte_enemigo")
 	await get_tree().create_timer(1.2).timeout
@@ -627,12 +658,14 @@ func _spawnear_arquero() -> void:
 func _on_arquero_murio(_pos) -> void:
 	arqueros_vivos    -= 1
 	arqueros_derrotados += 1
+	sumar_puntos(150)
 	_subir_dificultad()
 	get_tree().call_group("mascotas", "registrar_muerte_enemigo")
 
 func _on_lancero_murio(_pos) -> void:
 	lanceros_vivos    -= 1
 	lanceros_derrotados += 1
+	sumar_puntos(200)
 	_subir_dificultad()
 	get_tree().call_group("mascotas", "registrar_muerte_enemigo")
 	await get_tree().create_timer(1.0).timeout
@@ -812,6 +845,7 @@ func _mantener_jefes() -> void:
 func _on_jefe_boss_rush_murio(_pos) -> void:
 	enemigos_derrotados += 1
 	jefe_activo = false
+	sumar_puntos(1000)
 	_subir_dificultad()
 	get_tree().call_group("mascotas", "registrar_muerte_enemigo")
 	await get_tree().create_timer(3.0).timeout
@@ -976,7 +1010,10 @@ func _cambiar_mapa(config: Dictionary) -> void:
 		add_child(jefe, true)
 		jefe.global_position = _pos_aleatoria_lejos_del_player()
 		if jefe.has_signal("murio"):
-			jefe.murio.connect(func(_pos_jefe): _cargar_siguiente_escena_real.call_deferred(config))
+			jefe.murio.connect(func(_pos_jefe):
+				sumar_puntos(1500)
+				_cargar_siguiente_escena_real.call_deferred(config)
+			)
 		print("[JEFE] ¡El Lord Caballero de la Sombra ha aparecido!")
 
 func _spawnear_jefe_dragon() -> void:
@@ -1024,6 +1061,7 @@ func _spawnear_jefe_dragon() -> void:
 
 func _on_dragon_murio(_posicion) -> void:
 	print("[DRAGON] ¡El Dragón ha sido derrotado!")
+	sumar_puntos(2500)
 	
 	if NetworkManager.is_multiplayer_active() and NetworkManager.is_server():
 		rpc_mostrar_banner_victoria.rpc()
